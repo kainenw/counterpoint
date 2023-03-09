@@ -1,0 +1,16 @@
+{
+  "folders": [
+	{
+		"name": "contrapunkt",
+		"path": "."
+	},
+	{
+		"name": "synthesizer-0.2.0",
+		"path": "../../../Downloads/synthesizer-0.2.0"
+	},
+	{
+		"path": "../../../Downloads/numpy-1.24.2"
+	}
+],
+  "settings": {}
+}
