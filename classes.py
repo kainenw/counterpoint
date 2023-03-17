@@ -39,9 +39,10 @@ def isDirect(prev1,next1, prev2,next2):
   return isDirect
 
 # return what kind of motion is occuring between two notes
-def isDirectPerfect(prev1,next1, prev2,next2, isCons):
+def isDirectPerfect(prev1,next1, prev2,next2):
   interval1 = prev1 - prev2
   interval2 = next1 - next2
-  isDirect = interval1 * interval2  > 0
+  isDirect = interval1 * interval2 > 0
+  isCons = isConsonant(next1, next2)
   isPerfect = isCons == "perfect"
   return isDirect and isPerfect
