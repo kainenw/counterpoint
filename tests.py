@@ -23,31 +23,26 @@ testHigherCf = {
   "i": [12, 11, 5, 7, 5, 2, 4, 9, 7, 11, 9, 7, 7, 11, 9, 12],
 }
 
-allPossibleMoves(0,2,12)
-
-    
-
-
 class nextDict(unittest.TestCase):
-    def test_nextDict(self):
-      input = {
-        'moves': [[0,12]],
-        '[0, 12]': [[[0,12]]],
-      }
+  def test_nextDict(self):
+    input = {
+      'moves': [[0,12]],
+      '[0, 12]': [[[0,12]]],
+    }
 
-      expected = {
-        'moves': [[2, 11],[2, 9],[2, 17],[2, 5]],
-        '[2, 11]': [[[0, 12],[2, 11]]],
-        '[2, 17]': [[[0, 12],[2, 17]]],
-        '[2, 9]': [[[0, 12], [2, 9]]],
-        '[2, 5]': [[[0, 12], [2, 5]]]
-      }
-      actual = getAllNextMoves(input, 2)
-      self.assertEqual(expected, actual)
+    expected = {
+      'moves': [[2, 11],[2, 9],[2, 17],[2, 5]],
+      '[2, 11]': [[[0, 12],[2, 11]]],
+      '[2, 17]': [[[0, 12],[2, 17]]],
+      '[2, 9]': [[[0, 12], [2, 9]]],
+      '[2, 5]': [[[0, 12], [2, 5]]]
+    }
+    actual = getAllNextMoves(input, 2)
+    self.assertEqual(expected, actual)
 
 
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()
 
 

@@ -1,4 +1,6 @@
 from classes import isConsonant, isDirect
+from firstSpecies import allPossibleMoves, getAllNextMoves, getAllPossibleCpts
+from tests import testLowerCf, testHigherCf
 
 from scales import scales
 

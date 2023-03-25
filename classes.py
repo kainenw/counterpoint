@@ -15,79 +15,103 @@ def intervalClassModTwelve(num1, num2):
     return intervalClass
 
 # interval categories
-intervals = {
-  'consonances': {
-    'perfect': [0, 5],
-    'imperfect': [3, 4]
-  },
-  'dissonances': {1, 2, 6},
+consonance = {
+  'perfect': [0, 5],
+  'imperfect': [3, 4]
 }
+dissonance = [1, 2, 6]
 
-def isConsonant(num1, num2):
-  mod = intervalClassModTwelve(num1, num2)
+def isConsonant(num1,num2):
+  mod = intervalClassModTwelve(num1,num2)
   absVal = abs(mod)
   # perfect 4ths (categorized as positive 5) are not counted as consonants by Fux in 1st species
-  if (intervals["consonances"]["perfect"].__contains__(absVal) and mod != 5):
+  if (consonance["perfect"].__contains__(absVal) and mod != 5):
     return "perfect"
-  elif intervals["consonances"]["imperfect"].__contains__(absVal):
+  elif (consonance["imperfect"].__contains__(absVal)):
     return "imperfect"
   else:
     return False
 
-def isDirect(prev1,next1, prev2,next2):
-  interval1 = prev1 - next1
-  interval2 = prev2 - next2
-  isDirect = interval1 * interval2  > 0
-  return isDirect
-
-# rewrite to only care about parallel perfect intervals
-# return what kind of motion is occuring between two notes
-def isDirectPerfect(prev1,next1, prev2,next2):
+# Direct: > 0
+# Oblique: == 0
+# Contrary: < 0
+def motion(prev1,next1,prev2,next2):
   interval1 = prev1 - prev2
   interval2 = next1 - next2
-  isDirect = interval1 * interval2 > 0
-  isCons = isConsonant(next1, next2)
-  isPerfect = isCons == "perfect"
-  return isDirect and isPerfect
+  motion = interval1 * interval2
+  return motion
 
-def isInGamut(note, gamutType = "dia", mode = "i"):
-  gamut = scales[gamutType][mode]
-  contains = gamut.__contains__(pitchClass(note))
+def isParallelPerfect(prev1,next1,prev2,next2):
+  interval1 = prev1 - next1
+  interval2 = prev2 - next2
+  isDirect = motion(prev1,next1,prev2,next2) > 0
+  isParallel = isDirect and interval1 == interval2
+  mod = intervalClassModTwelve(prev1,prev2)
+  isPerfect = consonance["perfect"].__contains__(abs(mod))
+  return isParallel and isPerfect
+
+def isInGamut(note, mode):
+  contains = mode.__contains__(pitchClass(note))
   return contains
 
-def isValidMove(prevCf, nextCf, prevCtp, nextCtp):
-  isCons = isConsonant(nextCf, nextCtp) != False
-  isDirPerf = isDirectPerfect(prevCf, nextCf, prevCtp, nextCtp)
-  isNotDirPerf = not isDirPerf
-  isInRange = prevCtp - 12 <= nextCtp <= prevCtp + 12
-  """ print("isCons: " + str(isCons) + "isInRange: " + str(isInRange) + "isNotDirPerf: " + str(isNotDirPerf)) """
-  isValid = isCons & isInRange & isNotDirPerf
-  """ print("isValid" + str(isValid)) """
+def isValidMove(prev1,next1,prev2,next2):
+  isCons = isConsonant(next1,next2) != False
+  isParPerf = isParallelPerfect(prev1,next1,prev2,next2)
+  isNotParPerf = not isParPerf
+  isInRange = prev2 - 12 <= next2 <= prev2 + 12
+  isValid = isCons & isInRange & isNotParPerf
   return isValid
 
-from classes import intervalClassModTwelve
+diatonic = {
+    "1": [0,2,4,5,7,9,11],
+    "2": [0,2,3,5,7,9,10],
+    "3": [0,1,3,5,7,8,10],
+    "4": [0,2,4,6,7,9,11],
+    "5": [0,2,4,5,7,9,10],
+    "6": [0,2,3,5,7,8,10]
+  }
 
-# todo detect gamut type and mode
-def getAllCombos(melody, ctpAbove, gamutType = "dia", mode = "i"):
+def detectMode(melody):
+  firstPitch = melody[0]
+  gamut = []
+  for note in melody:
+    adjusted = note - firstPitch
+    if gamut.__contains__(adjusted):
+      gamut.append(adjusted)
+  if gamut.__contains__(6):
+    return diatonic["4"]
+  elif gamut.__contains__(1):
+    return diatonic["3"]
+  elif gamut.__contains__(8):
+    return diatonic["6"]
+  elif gamut.__contains__(3):
+    return diatonic["2"]
+  elif gamut.__contains__(10):
+    return diatonic["5"]
+  elif gamut.__contains__(11):
+    return diatonic["1"]
+
+def getAllCombos(melody, ctpIsAbove):
+  mode = detectMode(melody)
   combos = {
     'melody': melody,
+    'mode': mode,
     'intervalToNext': [],
-    'ctpIsAbove': ctpAbove
+    'ctpIsAbove': ctpIsAbove
   }
   prevNote = None
   intervals = [3,4,7,8,9,12,16,19]
   for note in melody:
     possibleNotes = []
     for interval in intervals:
-      if ctpAbove:
+      if ctpIsAbove:
         possibleNote = note + interval
       else:
         possibleNote = note - interval
-      if isInGamut(possibleNote, gamutType, mode):
+      if isInGamut(possibleNote, mode):
         possibleNotes.append(possibleNote)
     if(prevNote != None):
       combos["intervalToNext"].append(note - prevNote)
     combos[str(note)] = possibleNotes
-    """ print("note: " + str(note) + "\n" + "prevNote: " + str(prevNote)) """
     prevNote = note
   return combos

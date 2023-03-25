@@ -15,4 +15,3 @@ Inspired by the Foox repository, which aims to accomplish the same task as this 
 ### Graph Data Structure
 
 In order to find and store the huge number of valid counter-melodies for a given line, the possible melodies are store in a graph. This is ideal because any note could have many notes it could move to and many notes that it has moved from. So a linnear data structure would be wildly ineffieiccent because a new list would be needed for each possible line, and a tree wouldn't be ideal either. I use the framework [NetworkX](https://networkx.org/documentation/stable/index.html) to create and manage the graphs used for the different species.
-
