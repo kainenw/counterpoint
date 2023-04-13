@@ -1,5 +1,28 @@
 import math
 
+""" 
+twelfthRootOfTwo = math.pow(2, 1 / 12)
+
+# reference note of 49 (A4)
+ref_num = 49
+# reference frequency of 440 Hz
+ref_freq = 440
+
+def TTET_calculation(n):
+  targetNum = n - ref_num
+  proportion_from_ref_freq = math.pow(twelfthRootOfTwo, targetNum)
+  freq = ref_freq * proportion_from_ref_freq
+  return freq
+
+def TTET_array():
+  list = []
+  for i in range(0, 88):
+    Hz = TTET_calculation(i)
+    list.append(Hz)
+  return list
+
+TTET = TTET_array() """
+
 # twelve-tone equal temperament
 # 49 = A4 = 440Hz
 # frequency in hertz (Hz)

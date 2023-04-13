@@ -1,4 +1,5 @@
 from scales import scales
+import random
 
 # pitch class from 0 to 12
 def pitchClass(num):
@@ -62,34 +63,53 @@ def isValidMove(prev1,next1,prev2,next2):
   isValid = isCons & isInRange & isNotParPerf
   return isValid
 
-diatonic = {
-    "1": [0,2,4,5,7,9,11],
-    "2": [0,2,3,5,7,9,10],
-    "3": [0,1,3,5,7,8,10],
-    "4": [0,2,4,6,7,9,11],
-    "5": [0,2,4,5,7,9,10],
-    "6": [0,2,3,5,7,8,10]
-  }
+diatonic_modes = {
+  "ionian": [0,2,4,5,7,9,11],
+  "lydian": [0,2,4,6,7,9,11],
+  "mixolydian": [0,2,4,5,7,9,10],
+  "dorian": [0,2,3,5,7,9,10],
+  "phrygian": [0,1,3,5,7,8,10],
+  "aeolean": [0,2,3,5,7,8,10]
+}
 
-def detectMode(melody):
+def getGamut(melody):
+  # detects mode of a diatonic melody, arbitrarily selects compatible modes when mode is ambiguous, will return incorrect results for non-diatonic melodies
   firstPitch = melody[0]
   gamut = []
   for note in melody:
-    adjusted = note - firstPitch
-    if gamut.__contains__(adjusted):
+    # transpose down so pitch center is 0
+    adjusted = (note - firstPitch) % 12
+    
+    # add adjusted pitch-class to gamut unless it is already there
+    if not gamut.__contains__(adjusted):
       gamut.append(adjusted)
-  if gamut.__contains__(6):
-    return diatonic["4"]
-  elif gamut.__contains__(1):
-    return diatonic["3"]
-  elif gamut.__contains__(8):
-    return diatonic["6"]
-  elif gamut.__contains__(3):
-    return diatonic["2"]
-  elif gamut.__contains__(10):
-    return diatonic["5"]
-  elif gamut.__contains__(11):
-    return diatonic["1"]
+  return gamut
+
+#chat gpt generated
+def matching_modes(input_arr):
+    """
+    Returns a list of keys for the lists in diatonic_modes which contain input_arr.
+    """
+    matching_keys = []
+    # diatonic dictionary containing the six diatonic modes
+    for key, arr in diatonic_modes.items():
+        if arr == input_arr or all(elem in arr for elem in input_arr):
+            matching_keys.append(key)
+    if matching_keys == []:
+      raise ValueError("The mode is not diatonic. Only diatonic modes are allowed for now.")
+    return matching_keys
+
+def detectMode(melody):
+  gamut = getGamut(melody)
+  mode = matching_modes(gamut)
+  if len(mode) == 1:
+    mode = mode[0]
+  elif len(mode) > 1:
+    #arbitrarily pick a compatible mode
+    index_length = len(mode) -1
+    num = round(random.random() * index_length)
+    mode = mode[num]
+  return diatonic_modes[mode]
 
 def getAllCombos(melody, ctpIsAbove):
   mode = detectMode(melody)

@@ -26,6 +26,8 @@ def allPossibleMoves(prevCf, nextCf, prevCtp, type = "dia", mode = "i"):
                 possibilities.append([nextCf, nextCtp])
   return possibilities
 
+print(allPossibleMoves)
+
 def getAllNextMoves(dict, nextCf):
   newDict = {
     'moves': []
