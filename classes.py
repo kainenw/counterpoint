@@ -1,4 +1,3 @@
-from scales import scales
 import random
 
 # pitch class from 0 to 12
@@ -59,7 +58,7 @@ def isValidMove(prev1,next1,prev2,next2):
   isCons = isConsonant(next1,next2) != False
   isParPerf = isParallelPerfect(prev1,next1,prev2,next2)
   isNotParPerf = not isParPerf
-  isInRange = prev2 - 12 <= next2 <= prev2 + 12
+  isInRange = prev2 - 8 <= next2 <= prev2 + 8
   isValid = isCons & isInRange & isNotParPerf
   return isValid
 
