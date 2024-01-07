@@ -17,7 +17,7 @@ def play2(item):
 
 
 def playFirstSpecies(line):
-  for item in line:
-    freq1 = getFreq(57 + item[0])
-    freq2 = getFreq(57 + item[1])
+  for pair in line:
+    freq1 = getFreq(57 + pair[0])
+    freq2 = getFreq(57 + pair[1])
     player.play_wave(synth.generate_chord([freq1, freq2], 0.2))

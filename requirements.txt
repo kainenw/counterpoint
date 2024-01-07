@@ -2,3 +2,5 @@ pip
 numpy
 scipy
 pyaudio
+networkx
+matplotlib

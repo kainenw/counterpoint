@@ -1,7 +1,4 @@
-from classes import isConsonant, isDirect
-from firstSpecies import allPossibleMoves, getAllNextMoves, getAllPossibleCpts
-from tests import testLowerCf, testHigherCf
-
+import classes as c
 from scales import scales
 
 def allPossibleMoves(prevCf, nextCf, prevCtp, type = "dia", mode = "i"):
@@ -14,9 +11,9 @@ def allPossibleMoves(prevCf, nextCf, prevCtp, type = "dia", mode = "i"):
     possibleCtpNotes = [up, down]
     for nextCtp in possibleCtpNotes:
       if(scale.__contains__(nextCtp % 12)):
-        isCons = isConsonant(nextCf, nextCtp)
+        isCons = c.isConsonant(nextCf, nextCtp)
         if(isCons):
-          isDir = isDirect(prevCf, nextCf, prevCtp, nextCtp)
+          isDir = c.motion(prevCf, nextCf, prevCtp, nextCtp)
           isPerfect = isCons == 'perfect'
           isDirectPerfect = isDir and isPerfect
           if(not isDirectPerfect):
