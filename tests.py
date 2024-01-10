@@ -56,7 +56,7 @@ import classes as c
 import first as f
 import graph as g
 
-melody_data = c.getAllCombos(testLowerCf["f"], True)
+melody_data = c.get_all_combos(testLowerCf["f"], True)
 ctp_nodes_and_edges = f.find_nodes_and_edges(melody_data)
 cf_nodes_and_edges = f.cf_make_nodes_and_edges(testLowerCf["f"])
 print(ctp_nodes_and_edges)

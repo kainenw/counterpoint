@@ -36,6 +36,7 @@ def generate_key(position):
 print(generate_key(4))
 
 scales = {
+    # diatonic modes
     "dia": {
         "i": [0, 2, 4, 5, 7, 9, 11],
         "d": [0, 2, 3, 5, 7, 9, 10],
@@ -44,7 +45,8 @@ scales = {
         "m": [0, 2, 4, 5, 7, 9, 10],
         "a": [0, 2, 3, 5, 7, 8, 10],
     },
-    "pent": {"0": {0, 2, 4, 6, 8, 10}, "1": {1, 3, 5, 7, 9, 11}},
+    # whole-tone scales
+    "wt": {"0": {0, 2, 4, 6, 8, 10}, "1": {1, 3, 5, 7, 9, 11}},
     "oct": {
         "0,1": {0, 1, 3, 4, 6, 7, 9, 10},
         "0,2": {0, 2, 3, 5, 6, 8, 9, 11},
@@ -53,13 +55,13 @@ scales = {
 }
 
 
-def getGamut(melody):
+def get_gamut(melody):
     # detects mode of a diatonic melody, arbitrarily selects compatible modes when mode is ambiguous, will return incorrect results for non-diatonic melodies
-    firstPitch = melody[0]
+    first_pitch = melody[0]
     gamut = []
     for note in melody:
         # transpose down so pitch center is 0
-        adjusted = (note - firstPitch) % 12
+        adjusted = (note - first_pitch) % 12
 
         # add adjusted pitch-class to gamut unless it is already there
         if not gamut.__contains__(adjusted):
@@ -67,8 +69,8 @@ def getGamut(melody):
     return gamut
 
 
-def isInGamut(note, mode):
-    contains = mode.__contains__(classes.pitchClass(note))
+def is_in_gamut(note, mode):
+    contains = mode.__contains__(classes.pitch_class(note))
     return contains
 
 
@@ -89,8 +91,8 @@ def matching_modes(input_arr):
     return matching_keys
 
 
-def detectMode(melody):
-    gamut = getGamut(melody)
+def detect_mode(melody):
+    gamut = get_gamut(melody)
     mode = matching_modes(gamut)
     if len(mode) == 1:
         mode = mode[0]
@@ -102,6 +104,6 @@ def detectMode(melody):
     return scales['dia'][mode]
 
 
-def isInGamut(note, mode):
-    contains = mode.__contains__(classes.pitchClass(note))
+def is_in_gamut(note, mode):
+    contains = mode.__contains__(classes.pitch_class(note))
     return contains

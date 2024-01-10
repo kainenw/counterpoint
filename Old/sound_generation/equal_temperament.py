@@ -52,9 +52,9 @@ noteLetters = [
 """get the desired note by entering the pitch class and octave number (e.g. (9, 4) which is A4) this allows notes to be referenced intuitively but also for intervals to be retrieved easily. """
 
 
-def getNoteNum(pitchClass, octave):
+def getNoteNum(pitch_class, octave):
     octShift = octave * 12
-    noteNum = pitchClass + octShift
+    noteNum = pitch_class + octShift
     return noteNum
 
 
