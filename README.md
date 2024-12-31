@@ -12,7 +12,7 @@ For reasons against using this temperament system, see [this forum](https://modw
 
 ### No Scale Degrees
 
-This program does not use scale degrees. This is because the numbering of scale is inconsistent with the pitch and interval classes that this program uses. 
+This program does not use scale degrees. This is because the numbering of scale is inconsistent with the pitch and interval classes that this program uses.
 
 ### Completeness
 
