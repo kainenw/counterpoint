@@ -13,7 +13,7 @@ def is_valid_move(prev1, next1, prev2, next2):
     return False
 
 
-print(is_valid_move(0, 2, 12, 11))
+# print(is_valid_move(0, 2, 12, 11))
 
 # %% [markdown]
 # mini-test
@@ -48,7 +48,7 @@ def get_all_combos(melody, ctp_is_above):
         pre_note = note
     return combos
   
-print(get_all_combos([0, 2, 4, 5, 7, 9, 11, 12], True))
+# print(get_all_combos([0, 2, 4, 5, 7, 9, 11, 12], True))
 
 # %%
 def findCounterpoint(melody):
