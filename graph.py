@@ -166,7 +166,7 @@ def remove_unreaching_nodes(graph, final_index):
     node = nodes.pop()
     is_on_path = None
     for final_node in final_nodes:
-      if final_node.__contains__(node):
+      if final_nodes.__contains__(node):
         is_on_path = True
       elif not is_on_path:
         descendants = (nx.descendants(graph, node))
