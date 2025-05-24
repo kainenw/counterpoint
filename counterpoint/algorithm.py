@@ -1,10 +1,15 @@
 import networkx as nx
+from .exceptions import CounterpointGenerationError
+from counterpoint.primatives import is_consonant, is_direct_perfect
 
 def node_label(position, cf, ctp):
   duration = 1
   return (position, duration, ctp, cf)
 
 def make_cf_graph(melody):
+  if not melody:
+    raise CounterpointGenerationError("Input melody is empty.")
+
   nodes = []
   edges = []
   for i in range(len(melody)):
@@ -16,12 +21,18 @@ def make_cf_graph(melody):
   G.add_nodes_from(nodes)
   G.add_edges_from(edges)
 
+  if not nodes:
+    raise CounterpointGenerationError("No nodes created for CF graph.")
+
   return G
 
 # only works with first species and ctp above
 def make_ctp_graph(melody_data):
     melody = melody_data["melody"]
     final_index = len(melody) - 1
+
+    if not melody:
+      raise CounterpointGenerationError("Input melody data is empty.")
 
     all_possibilities = dict()
 
@@ -77,10 +88,32 @@ def make_ctp_graph(melody_data):
                     if valid:
                         next_label = node_label(next_index, next_note, next_possibility)
                         edge = (label, next_label)
-                        edges.append(edge)
+
+                        # Calculate weight for the edge
+                        weight = 1 # Minimum weight
+
+                        # Penalize parallel perfect fifths and octaves (assuming ctp above cf)
+                        if abs((next_possibility - next_note) % 12) in [7, 0] and abs((possibility - note) % 12) in [7, 0] and (next_possibility - possibility) != 0:
+                            weight = 1000
+                        else:
+                            # Assign weight based on melodic interval in counterpoint
+                            melodic_interval = abs(next_possibility - possibility)
+                            if melodic_interval > 8: # Large leaps
+                                weight = 3
+                            elif melodic_interval > 4: # Medium leaps
+                                weight = 2
+                            # Steps and small leaps already have weight 1
+
+                        edges.append((label, next_label, {'weight': weight}))
     G = nx.DiGraph()
     G.add_nodes_from(nodes)
     G.add_edges_from(edges)
+
+    if not nodes:
+      raise CounterpointGenerationError("No nodes created for CTP graph.")
+
+    if not edges:
+      raise CounterpointGenerationError("No edges created for CTP graph. No valid moves found.")
 
     G = remove_unreachable_nodes(G)
     G = remove_unreaching_nodes(G,final_index)
@@ -105,6 +138,9 @@ def remove_unreachable_nodes(graph):
       position = node[0]
       if position == 0:
         first_nodes.append(node)
+
+    if not first_nodes:
+      raise CounterpointGenerationError("No starting nodes found in the graph.")
 
     # Create a set of reachable nodes
     reachable_nodes = set(first_nodes)
@@ -140,6 +176,9 @@ def remove_unreaching_nodes(graph, final_index):
     position = node[0]
     if position == final_index:
       final_nodes.append(node)
+
+  if not final_nodes:
+    raise CounterpointGenerationError("No ending nodes found in the graph.")
   on_path = []
 
   # add all nodes on a path to the end to on_path.
@@ -166,9 +205,10 @@ def remove_unreaching_nodes(graph, final_index):
   for node in unreaching_nodes:
     graph.remove_node(node)
 
-  return graph
+  if not graph.nodes():
+      raise CounterpointGenerationError("All nodes were removed during pruning.")
 
-from counterpoint.primatives import is_consonant, is_direct_perfect
+  return graph
 
 def is_valid_move(prev1, next1, prev2, next2):
     is_cons = is_consonant(next1, next2)
@@ -182,6 +222,10 @@ def is_valid_move(prev1, next1, prev2, next2):
 
 
 def get_all_combos(melody, ctp_is_above):
+    if not melody:
+        raise CounterpointGenerationError("Input melody is empty.")
+    if not all(isinstance(note, (int, float)) for note in melody):
+        raise CounterpointGenerationError("Input melody contains invalid note types.")
     key = [0,2,4,5,7,9,11]
     mode = melody[0]
     combos = {

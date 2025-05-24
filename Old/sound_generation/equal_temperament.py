@@ -62,15 +62,9 @@ def getOctave(noteNum):
     return math.floor(noteNum / 12)
 
 
-def getFreq(noteNum):
-    noteFreq = freq[noteNum]
-    return noteFreq
-
-
 def getNoteLetter(noteNum):
     mod12 = noteNum % 12
     noteLetter = noteLetters[mod12]
     return noteLetter
 
 
-print(getFreq(49))
