@@ -1,6 +1,4 @@
 # %%
-import unittest
-
 from first import allPossibleMoves, getAllNextMoves, getAllPossibleCpts
 
 testLowerCf = {
@@ -26,29 +24,23 @@ testHigherCf = {
 
 moves = allPossibleMoves([])
 
-class nextDict(unittest.TestCase):
-  def test_nextDict(self):
-    input = {
-      'moves': [[0,12]],
-      '[0, 12]': [[[0,12]]],
-    }
+def test_getAllNextMoves():
+  input_data = {
+    'moves': [[0, 12]],
+    '[0, 12]': [[[0, 12]]],
+  }
 
-    expected = {
-      'moves': [[2, 11],[2, 9],[2, 17],[2, 5]],
-      '[2, 11]': [[[0, 12],[2, 11]]],
-      '[2, 17]': [[[0, 12],[2, 17]]],
-      '[2, 9]': [[[0, 12], [2, 9]]],
-      '[2, 5]': [[[0, 12], [2, 5]]]
-    }
-    actual = getAllNextMoves(input, 2)
-    self.assertEqual(expected, actual)
+  expected_output = {
+    'moves': [[2, 11], [2, 9], [2, 17], [2, 5]],
+    '[2, 11]': [[[0, 12], [2, 11]]],
+    '[2, 17]': [[[0, 12], [2, 17]]],
+    '[2, 9]': [[[0, 12], [2, 9]]],
+    '[2, 5]': [[[0, 12], [2, 5]]]
+  }
+  actual_output = getAllNextMoves(input_data, 2)
+  assert expected_output == actual_output
 
-
-
-if __name__ == '__main__':
-  unittest.main()
-
-
+# %%
 
 
 # %%
@@ -66,31 +58,25 @@ g.visualize_graph(cf_graph, ctp_graph)
 
 
 # %%
-import sys
 from equal_temperament import ET
 
-class MyTest(unittest.TestCase):
-  def test_getFreq(self):
-    # define twelve tone equal temperament
-    TTET = ET(12)
+def test_getFreq():
+  # define twelve tone equal temperament
+  TTET = ET(12)
 
-    # Test case 1: Check the frequency of a known note
-    note = 49 # 'A4'
-    expected_freq = 440.00
-    actual_freq = TTET[note]
-    self.assertAlmostEqual(actual_freq, expected_freq, places=2)
+  # Test case 1: Check the frequency of a known note
+  note = 49 # 'A4'
+  expected_freq = 440.00
+  actual_freq = TTET[note]
+  assert actual_freq == pytest.approx(expected_freq, abs=1e-2)
 
-    # Test case 2: Check the frequency of another note
-    note = 52 # 'C4'
-    expected_freq = 261.63
-    actual_freq = TTET[note]
-    self.assertAlmostEqual(actual_freq, expected_freq, places=2)
+  # Test case 2: Check the frequency of another note
+  note = 52 # 'C4'
+  expected_freq = 261.63
+  actual_freq = TTET[note]
+  assert actual_freq == pytest.approx(expected_freq, abs=1e-2)
 
-if __name__ == '__main__':
-  unittest.main()
-  sys.path.append('../sound_generation/equal_temperament.py')
-
-
+# %%
 
 # %% [markdown]
 # equal_temperament test
@@ -100,29 +86,24 @@ import equal_temperament
 
 ttet = equal_temperament.TTET()
 
-
 # %%
-import unittest
-import sys
-sys.path.append('../sound_generation/equal_temperament.py')
 from equal_temperament import ET
 
-class MyTest(unittest.TestCase):
-  def test_getFreq(self):
-    # define twelve tone equal temperament
-    TTET = ET(12)
+def test_getFreq_again():
+  # define twelve tone equal temperament
+  TTET = ET(12)
 
-    # Test case 1: Check the frequency of a known note
-    note = 49 # 'A4'
-    expected_freq = 440.00
-    actual_freq = TTET[note]
-    self.assertAlmostEqual(actual_freq, expected_freq, places=2)
+  # Test case 1: Check the frequency of a known note
+  note = 49 # 'A4'
+  expected_freq = 440.00
+  actual_freq = TTET[note]
+  assert actual_freq == pytest.approx(expected_freq, abs=1e-2)
 
-    # Test case 2: Check the frequency of another note
-    note = 52 # 'C4'
-    expected_freq = 261.63
-    actual_freq = TTET[note]
-    self.assertAlmostEqual(actual_freq, expected_freq, places=2)
+  # Test case 2: Check the frequency of another note
+  note = 52 # 'C4'
+  expected_freq = 261.63
+  actual_freq = TTET[note]
+  assert actual_freq == pytest.approx(expected_freq, abs=1e-2)
 
 # %%
 import unittest
@@ -132,15 +113,10 @@ def transform_array_to_dict(arr):
   # Your implementation here
   pass
 
-class ArrayToDictTest(unittest.TestCase):
-  def test_transform_array_to_dict(self):
-    arr = [1, 2, 3, 4]
-    expected_dict = {1: 1, 2: 2, 3: 3, 4: 4}
-    actual_dict = transform_array_to_dict(arr)
-    self.assertEqual(expected_dict, actual_dict)
-
-if __name__ == '__main__':
-  unittest.main()
-
+def test_transform_array_to_dict():
+  arr = [1, 2, 3, 4]
+  expected_dict = {1: 1, 2: 2, 3: 3, 4: 4}
+  actual_dict = transform_array_to_dict(arr)
+  assert expected_dict == actual_dict
 
 

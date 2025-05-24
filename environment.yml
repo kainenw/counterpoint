@@ -1,0 +1,12 @@
+name: counterpoint
+channels:
+ - defaults
+dependencies:
+ - python
+ - networkx
+name: counterpoint
+channels:
+  - defaults
+dependencies:
+  - python
+  - networkx
