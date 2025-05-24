@@ -27,71 +27,49 @@ def make_cf_graph(melody):
 
 # %%
 # only works with first species and ctp above
-def make_ctp_graph(melody_data):
-    melody = melody_data["melody"]
-    final_index = len(melody) - 1
-    
-    all_possibilities = dict()
-    
-    nodes = list()
-    final_nodes = list()
-    first_nodes = list()
-    edges = list()
-    
-    # find all possible nodes
-    for i in range(0, len(melody)):
-        note = melody[i]
-        current = all_possibilities[i] = []
-        
-        # get possible counterpoint notes
-        if i == 0 or i == final_index:
-            possible_ctps = [note, note + 7, note + 12, note + 19]
-        elif i == final_index - 1:
-            if note > 0:
-              possible_ctps = [note + 9]
-            elif note < 0:
-              possible_ctps = [note + 3, note + 3 + 12]
-        else:
-            possible_ctps = melody_data[str(note)]
-        
-        # add nodes for each possible ctp
-        for ctp in possible_ctps:
-            label = node_label(
-                i, note, ctp
-            )  # create label: "index, melody note, ctp note"
-            current.append(ctp)  # add label to possibilities dictionary
-            nodes.append(label)  # add label to nodes list
-            if i == 0:
-                first_nodes.append(label)
-            if i == final_index:
-                final_nodes.append(label)
-                
-    # find all possible edges
-    for key, possibilities in all_possibilities.items():
-      
-        if key != final_index:
-            note = melody[key]
-            index = int(key)
+def make_ctp_graph(melody_data, ctp_above=True):
+    melody = melody_data["melody_notes"]
+    num_positions = len(melody)
+    final_index = num_positions - 1
 
-            next_index = index + 1
-            next_note = melody[next_index]
-            next_possibilities = all_possibilities[next_index]
-
-            for possibility in possibilities:
-                label = node_label(index, note, possibility)
-                for next_possibility in next_possibilities:
-                    # check if move is valid, if so add edge
-                    valid = first.is_valid_move(note, next_note, possibility, next_possibility)
-                    if valid:
-                        next_label = node_label(next_index, next_note, next_possibility)
-                        edge = (label, next_label)
-                        edges.append(edge)
     G = nx.DiGraph()
-    G.add_nodes_from(nodes)
-    G.add_edges_from(edges)
-  
-    G = remove_unreachable_nodes(G)
-    G = remove_unreaching_nodes(G,final_index)
+
+    # Generate nodes and potential edges in a single pass
+    for i in range(num_positions):
+        note = melody[i]
+ 
+        if i == 0 or i == final_index:
+            if ctp_above:
+                possible_ctps = [note + 12, note + 19] # Octave and 12th above
+            else:
+                possible_ctps = [note - 12, note - 19] # Octave and 12th below
+        elif i == final_index - 1:
+            if ctp_above:
+                possible_ctps = [note + 9] # Leading tone above (major 7th)
+            else:
+                possible_ctps = [note - 3, note - 3 - 12] # Leading tone below (minor 3rd and 10th)
+        else:
+            if ctp_above:
+                possible_ctps = melody_data[str(note)]["above"]
+            else:
+                possible_ctps = melody_data[str(note)]["below"]
+        for ctp in possible_ctps:
+            current_node = node_label(i, note, ctp)
+            G.add_node(current_node)
+
+
+            if i < final_index:
+                next_index = i + 1
+                next_note = melody[next_index]
+                next_possible_ctps = melody_data[str(next_note)]["above"] if ctp_above else melody_data[str(next_note)]["below"]
+
+                for next_ctp in next_possible_ctps:
+                    valid = first.is_valid_move(note, next_note, ctp, next_ctp, ctp_above=ctp_above)
+                    if valid:
+                        next_node = node_label(next_index, next_note, next_ctp)
+                        G.add_edge(current_node, next_node)
+
+    G = prune_graph(G, final_index)
     
     return G
 
@@ -100,91 +78,26 @@ def make_ctp_graph(melody_data):
 # ## Pruning Functons
 
 # %%
-# remove all nodes unreachable from a first node
-
-def remove_unreachable_nodes(graph):
-    """
-    Remove nodes from a NetworkX graph that are not on a path to any of the specified nodes.
-
-    Args:
-        G (nx.Graph or nx.DiGraph): The input graph.
-        specified_nodes (list): List of nodes that are considered reachable.
-
-    Returns:
-        nx.Graph or nx.DiGraph: The modified graph with unreachable nodes removed.
-    """
-    # find first nodes
-    nodes = list(graph.nodes())
-    first_nodes = []
-    for node in nodes:
-      position = node[0]
-      if position == 0:
-        first_nodes.append(node)
-      
-    # Create a set of reachable nodes
-    reachable_nodes = set(first_nodes)
-
-    # Perform a breadth-first search from each specified node and add all reachable nodes to the set
+def prune_graph(graph, final_index):
+    """Prunes the graph by removing nodes unreachable from the start and nodes that don't have a path to the end."""
+    # Remove nodes unreachable from the start
+    first_nodes = [node for node in graph.nodes() if node[0] == 0]
+    reachable_from_start = set(first_nodes)
     for node in first_nodes:
-        reachable_nodes.update(nx.descendants(graph, node))
-
-    # Get the set of nodes that are not reachable
-    unreachable_nodes = set(graph.nodes()) - reachable_nodes
-
-    # Remove the unreachable nodes from the graph
+        reachable_from_start.update(nx.descendants(graph, node))
+    unreachable_nodes = set(graph.nodes()) - reachable_from_start
     graph.remove_nodes_from(unreachable_nodes)
 
-    # Return the modified graph with unreachable nodes removed
+    # Remove nodes that don't have a path to the end
+    final_nodes = [node for node in graph.nodes() if node[0] == final_index]
+    reachable_to_end = set(final_nodes)
+    for node in final_nodes:
+        reachable_to_end.update(nx.ancestors(graph, node))
+    unreaching_nodes = set(graph.nodes()) - reachable_to_end
+    graph.remove_nodes_from(unreaching_nodes)
+
     return graph
 
-# %%
-# remove nodes not on a path to a final node
-
-def remove_unreaching_nodes(graph, final_index):
-  """Remove nodes from a NetworkX graph that do not have a path to any of the
-  nodes in the input array.
-
-  Args:
-      G (nx.Graph or nx.DiGraph): The input graph.
-      nodes (list): List of nodes that are considered reachable.
-
-  Returns:
-      nx.Graph or nx.DiGraph: The modified graph with unreachable nodes removed.
-  """
-  # Create a list of last nodes
-  nodes = list(graph.nodes())
-  final_nodes = []
-  for node in nodes:
-    position = node[0]
-    if position == final_index:
-      final_nodes.append(node)
-  on_path = []
-
-  # add all nodes on a path to the end to on_path.
-  
-  while nodes:
-    node = nodes.pop()
-    is_on_path = None
-    for final_node in final_nodes:
-      if final_nodes.__contains__(node):
-        is_on_path = True
-      elif not is_on_path:
-        descendants = (nx.descendants(graph, node))
-        if descendants.__contains__(final_node):
-          is_on_path = True
-    if is_on_path:
-      on_path.append(node)
-  
-  # Create a set of all of the nodes that do not have
-  # a path to any of the specified nodes.
-  
-  unreaching_nodes = set(graph.nodes()) - set(on_path)
-  
-  # Remove all of the unreaching nodes from the graph.
-  for node in unreaching_nodes:
-    graph.remove_node(node)
-  
-  return graph
 
 # %%
 def visualize_network(G, solution_path=None):
@@ -222,7 +135,7 @@ def visualize_network(G, solution_path=None):
 import first
 
 melody = [0,4,9,7,4,2,0]
-melody_data = first.get_all_combos(melody, True)
+melody_data = first.get_all_combos(melody)
 # print("melody data:", melody_data)
 
 ctp_graph = make_ctp_graph(melody_data)

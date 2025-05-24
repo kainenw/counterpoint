@@ -66,10 +66,15 @@ def is_consonant(note1, note2):
     # Simplified check for consonance based on semitone difference
     # This should be expanded to include all consonant intervals
     interval = abs(note1 - note2) % 12
+    print(f"is_consonant interval: {interval}")
+    if note1 == 2 and note2 == 13:
+        print(f"is_consonant(2, 13) - note1: {note1}, note2: {note2}, interval: {interval}")
     return interval in [0, 3, 4, 7, 8, 9] # Unison, minor 3rd, major 3rd, perfect 5th, minor 6th, major 6th (and their octaves)
 
 def is_direct_perfect(prev1, next1, prev2, next2):
     """
+    Checks for direct perfect intervals (unisons, fifths, or octaves) where
+    both voices move in the same direction.
     Checks for direct perfect fifths or octaves.
 
     Args:
@@ -82,9 +87,16 @@ def is_direct_perfect(prev1, next1, prev2, next2):
         bool: True if there is a direct perfect fifth or octave, False otherwise.
     """
     interval_prev = abs(prev1 - prev2) % 12
-    interval_next = abs(next1 - next2) % 12
-    is_perfect_next = interval_next in [0, 7] # Unison or perfect 5th
-    return is_perfect_next and (prev1 - next1 != prev2 - next2) # Voices move in the same direction but not by the same interval
+    interval_next = (next2 - next1) % 12 # Calculate interval from first voice to second voice
+    # Check if the destination interval is a perfect fifth or octave (or unison)
+    is_perfect_next = interval_next % 12 in [0, 7]
+    # Check if voices move in the same direction
+    same_direction = (next1 - prev1 > 0 and next2 - prev2 > 0) or (next1 - prev1 < 0 and next2 - prev2 < 0)
+
+    if prev1 == 0 and next1 == 7 and prev2 == 12 and next2 == 19:
+        print(f"is_direct_perfect(0, 7, 12, 19) - is_perfect_next: {is_perfect_next}, same_direction: {same_direction}, result: {is_perfect_next and same_direction}")
+
+    return is_perfect_next and same_direction
 
 class CounterpointEngine:
     def __init__(self, melody):

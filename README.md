@@ -2,7 +2,12 @@
 
 ## Project Overview
 
-A program for generating counter-melodies for melodies
+This project is a Python program designed to generate counterpoint melodies for a given musical line (cantus firmus). It focuses on applying the principles of strict counterpoint within the framework of 12-tone equal temperament. The core functionality involves constructing a graph data structure to explore and store all valid counterpoint solutions based on the specified rules. The goal is to provide a tool for exploring the possibilities within strict counterpoint and potentially serve as a foundation for further musical generation or analysis.
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Getting Started](#getting-started)
 
 This project aims to generate counterpoint melodies for a given cantus firmus (a pre-existing melody). It focuses on generating all valid counterpoint solutions based on the rules of strict counterpoint, specifically using 12-tone equal temperament and avoiding the concept of scale degrees to maintain consistency with pitch and interval classes. The core data structure used is a graph, which efficiently stores and manages the potentially large number of possible valid counter-melodies.
 
@@ -11,6 +16,8 @@ This project aims to generate counterpoint melodies for a given cantus firmus (a
 To run this project locally, follow these steps:
 
 1. Clone the repository:
+
+
 
 ## Features
 
