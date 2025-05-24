@@ -187,36 +187,41 @@ def remove_unreaching_nodes(graph, final_index):
   return graph
 
 # %%
-def visualize_network(G):
-  # Set the spring layout with custom node positions
-  pos = nx.spring_layout(G, seed=42)
+def visualize_network(G, solution_path=None):
+    pos = {}
+    cf_notes_pos = {}
+    cf_notes_labels = {}
 
-  #create dictionary of x-axis and y-axis indexes
-  pos_nodes = G.nodes
-  pos_node_x = {}
-  pos_node_y = {}
-  for node in pos_nodes:
-    position = node[0]
-    ctp = node[2]
-    pos_node_y[node] = ctp
-    pos_node_x[node] = (position, ctp)
+    for node in G.nodes():
+        position, duration, ctp, cf_note = node
+        pos[node] = (position, ctp) # X=position, Y=counterpoint pitch
+        cf_notes_pos[(position, cf_note)] = (position, cf_note)
+        cf_notes_labels[(position, cf_note)] = str(cf_note)
 
-  # Set custom x-axis positions for nodes
-  for node, coords in pos_node_x.items():
-    pos[node] = coords
-  """or node, y in pos_node_y.items():
-    pos[node][0] = y """
-  
-  # TODO create dictionary of y-axis positions for pitch classes
-  
-  nx.draw(G, pos, with_labels=True, arrows=True)
-  plt.figure(figsize = (2^16,2^16))
+    plt.figure(figsize=(12, 6)) # Adjust figure size as needed
+
+    # Draw all nodes and edges (greyed out)
+    nx.draw(G, pos, with_labels=False, node_size=100, node_color='lightgray', edge_color='lightgray', arrows=False)
+
+    # Draw cantus firmus notes
+    nx.draw_networkx_nodes(G, cf_notes_pos, node_size=200, node_color='skyblue', marker='s')
+    nx.draw_networkx_labels(G, cf_notes_pos, cf_notes_labels, font_size=8)
+
+    # If a solution path is provided, highlight it
+    if solution_path:
+        solution_edges = [(solution_path[i], solution_path[i+1]) for i in range(len(solution_path)-1)]
+        nx.draw_networkx_nodes(G, pos, nodelist=solution_path, node_color='red', node_size=200)
+        nx.draw_networkx_edges(G, pos, edgelist=solution_edges, edge_color='red', width=2, arrows=True)
+
+    plt.title("Counterpoint Graph and Solution")
+    plt.xlabel("Position")
+    plt.ylabel("Pitch")
+    plt.grid(True)
 
 # %%
 import first
 
 melody = [0,4,9,7,4,2,0]
-
 melody_data = first.get_all_combos(melody, True)
 # print("melody data:", melody_data)
 
@@ -227,6 +232,4 @@ visualize_network(ctp_graph)
 cf_graph = make_cf_graph(melody)
 # print("network:", cf_graph)
 visualize_network(cf_graph)
-
-
 

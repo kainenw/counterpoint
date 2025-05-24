@@ -1,6 +1,16 @@
 # Counterpoint
 
+## Project Overview
+
 A program for generating counter-melodies for melodies
+
+This project aims to generate counterpoint melodies for a given cantus firmus (a pre-existing melody). It focuses on generating all valid counterpoint solutions based on the rules of strict counterpoint, specifically using 12-tone equal temperament and avoiding the concept of scale degrees to maintain consistency with pitch and interval classes. The core data structure used is a graph, which efficiently stores and manages the potentially large number of possible valid counter-melodies.
+
+## Getting Started
+
+To run this project locally, follow these steps:
+
+1. Clone the repository:
 
 ## Features
 
