@@ -213,11 +213,11 @@ def visualize_network(G):
   plt.figure(figsize = (2^16,2^16))
 
 # %%
-import first
+from counterpoint import algorithm as a
 
 melody = [0,4,9,7,4,2,0]
 
-melody_data = first.get_all_combos(melody, True)
+melody_data = a.get_all_combos(melody, True)
 # print("melody data:", melody_data)
 
 ctp_graph = make_ctp_graph(melody_data)
@@ -227,6 +227,3 @@ visualize_network(ctp_graph)
 cf_graph = make_cf_graph(melody)
 # print("network:", cf_graph)
 visualize_network(cf_graph)
-
-
-
