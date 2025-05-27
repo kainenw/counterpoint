@@ -213,7 +213,7 @@ def visualize_network(G):
   plt.figure(figsize = (2^16,2^16))
 
 # %%
-from counterpoint import algorithm as a
+import algorithm as a
 
 melody = [0,4,9,7,4,2,0]
 
